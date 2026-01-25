@@ -2,7 +2,8 @@
 !routes/
 !database/
 !.gitignore
-!App/
+
+!app/
 
 !routes/**
 !database/**
