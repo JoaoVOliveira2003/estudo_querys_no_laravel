@@ -1,9 +1,11 @@
 *
-!routes/
-!database/
 !.gitignore
 
-!app/
-
+!routes/
 !routes/**
+
+!database/
 !database/**
+
+!app/
+!app/**
