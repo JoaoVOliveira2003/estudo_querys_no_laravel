@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Phone;
+use App\Models\Client;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -244,4 +246,78 @@ class MainController extends Controller
 
         echo $retorno;
     }
+
+    public function oneToOne()
+    {
+        $client1 = Client::find(12)->phone;
+        echo ' cliente é' . $client1->client_name . ' - ' . $client1->phone_number;
+        echo '<br><hr>';
+        // dump($client1);
+    }
+
+    public function onetomany()
+    {
+        $clientes = Client::with(relations: 'phones')->get();
+        foreach ($clientes as $cliente) {
+            echo '<br><hr>';
+            echo ' cliente é - ' . $cliente->client_name;
+            echo '<br> telefones: <br>';
+            foreach ($cliente->phones as $telefone) {
+                echo $telefone->phone_number . '<br>';
+            }
+        }
+    }
+
+    public function belongsto()
+    {
+
+        $fone = Phone::find(12);
+        $cliente = $fone->client;
+        echo ' telefone - ' . $fone->phone_number . '<br>' . $cliente->client_name;
+        echo '<hr>';
+
+        $telefone2 = Phone::with('client')->find(4);
+        echo ' telefone - ' . $telefone2->phone_number . '<br>' . $telefone2->client->client_name;
+    }
+
+    public function manytomany()
+    {
+        // buscar um client e todos seus produtos compradoss
+        $cliente = Client::find(1);
+        // $produtos = $cliente->products()->orderBy(column: 'product_name','asc')->get();
+        $produtos = $cliente->products->sortBy('product_name');
+        echo 'Cliente - ' . $cliente->client_name;
+        foreach($produtos as $produto){
+            echo $produto->product_name . '<br>';
+        }
+    }
+
+    public function runningqueries(){
+        // seus telefones, mas só aqueles qu tem o numero 8 no começo.
+        $cliente = Client::find(1);
+
+        $telefones = $cliente->phones()->where('phone_number','like','8%')->get();
+        echo 'Cliente - ' . $cliente->client_name;
+        echo '<br> Telefone <br>';
+        foreach($telefones as $telefone){
+            echo $telefone->phone_number . '<br>';
+        }
+        echo '<hr>';
+
+        $produtos = $cliente->products()->where('price','>','50')->get();
+        foreach($produtos as $produto){
+            echo $produto->product_name . '<br>';
+        }
+    }
+
+    public function outraManeiraDeGet (){
+        $cliente = Client::find(1);
+        $Phone = Phone::where('client_id',$cliente->id)->get();
+    }
+
+    public function colecction(){
+        $cliente = Client::take(5)->get();
+    $this->mostrarCruDados($cliente);
+    }
+
 }
